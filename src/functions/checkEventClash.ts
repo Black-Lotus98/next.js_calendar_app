@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import { Event } from "@/type/event";
 
 const checkEventClash = (events: Event[]): void => {
-    // Iterate over each event
     for (let i = 0; i < events.length; i++) {
         for (let j = i + 1; j < events.length; j++) {
             const event1 = events[i];
@@ -10,12 +9,23 @@ const checkEventClash = (events: Event[]): void => {
 
             let isOverlap = false;
 
-            // Check for overlap if neither event is all-day
+            // Case 1: Both events are non-all-day
             if (!event1.allDay && !event2.allDay) {
-                isOverlap = !(dayjs(event2.end).isBefore(dayjs(event1.start)) || dayjs(event2.start).isAfter(dayjs(event1.end)));
+                const event1Start = dayjs(event1.start);
+                const event1End = dayjs(event1.end);
+                const event2Start = dayjs(event2.start);
+                const event2End = dayjs(event2.end);
+
+                // console.log("event1Start", event1Start.toDate())
+                // console.log("event1End", event1End.toDate())
+                // console.log("event2Start", event2Start.toDate())
+                // console.log("event2End", event2End.toDate())
+
+
+                isOverlap = !(event2End.isBefore(event1Start) || event2Start.isAfter(event1End));
             }
 
-            // Check for overlap if one of the events is all-day
+            // Case 2: One or both events are all-day
             if (event1.allDay || event2.allDay) {
                 const event1Start = dayjs(event1.start).startOf('day');
                 const event1End = event1.allDay ? event1Start.endOf('day') : dayjs(event1.end);
@@ -25,14 +35,14 @@ const checkEventClash = (events: Event[]): void => {
                 isOverlap = !(event2End.isBefore(event1Start) || event2Start.isAfter(event1End));
             }
 
+            // Log the overlap result
             if (isOverlap) {
                 console.log(`Overlap detected between "${event1.title}" and "${event2.title}"`);
-            }
-            else {
-                console.log('No overlap detected');
+            } else {
+                console.log(`No overlap detected between "${event1.title}" and "${event2.title}"`);
             }
         }
     }
-}
+};
 
 export default checkEventClash;

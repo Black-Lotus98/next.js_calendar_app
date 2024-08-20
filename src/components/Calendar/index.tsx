@@ -24,8 +24,8 @@ export default function Home() {
     const [idToDelete, setIdToDelete] = useState<number | null>(null)
     const [newEvent, setNewEvent] = useState<Event>({
         title: '',
-        start: '', // Default to current time
-        end: '',
+        start: dayjs(new Date).toDate(),
+        end: dayjs(new Date).add(2, 'hour').toDate(),
         allDay: false,
         id: 0,
     })
